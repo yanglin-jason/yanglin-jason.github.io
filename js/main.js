@@ -101,29 +101,4 @@ $(function () {
         });
     });
 
-    // Visitor counter
-    (function() {
-        var storageKey = 'site_visitor_count';
-        var countElement = $('#visitor-count');
-        
-        if (countElement.length) {
-            // Get current count from localStorage
-            var currentCount = parseInt(localStorage.getItem(storageKey)) || 0;
-            
-            // Check if this is a new visit (not a page refresh within the same session)
-            var sessionKey = 'visit_session_' + new Date().toDateString();
-            var hasVisitedToday = sessionStorage.getItem(sessionKey);
-            
-            if (!hasVisitedToday) {
-                // Increment count for new visit
-                currentCount++;
-                localStorage.setItem(storageKey, currentCount);
-                sessionStorage.setItem(sessionKey, 'true');
-            }
-            
-            // Update display with animation
-            countElement.text(currentCount.toLocaleString());
-        }
-    })();
-
 })
