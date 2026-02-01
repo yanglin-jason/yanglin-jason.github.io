@@ -82,18 +82,34 @@ $(function () {
             if ($(".nav").hasClass("nav-open")) {
                 $(".nav").removeClass("nav-open").addClass("nav-close")
             }
+            // Re-render MathJax after pjax load
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
         }
     });
 
-    // smooth scroll
+    // Add IDs to section headings for anchor navigation
+    $(function () {
+        // Add ID to Biography heading
+        $('h2:contains("Biography")').first().attr('id', 'biography');
+        // Add ID to Education heading
+        $('h2:contains("Education")').first().attr('id', 'education');
+        // Add ID to Publications heading
+        $('h2:contains("Publications")').first().attr('id', 'publications');
+    });
+
+    // smooth scroll with offset for fixed header
     $(function () {
         $('a[href*=\\#]:not([href=\\#])').click(function () {
             if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
                 var target = $(this.hash);
                 target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
                 if (target.length) {
+                    var headerHeight = $('#page_header').outerHeight() || 0;
+                    var offset = target.offset().top - headerHeight - 20; // 20px extra spacing
                     $('html,body').animate({
-                        scrollTop: target.offset().top
+                        scrollTop: offset
                     }, 700);
                     return false;
                 }

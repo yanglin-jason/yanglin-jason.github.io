@@ -1,0 +1,65 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>Lin Yang's homepage</title><meta name="author" content="Lin YANG"><link rel="shortcut icon" href="/img/favicon.png"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"></head><body><header id="page_header"><div class="header_wrap"><div id="blog_name"><a class="blog_title" id="site-name" href="/">Lin Yang's homepage</a></div><button class="menus_icon"><div class="navicon"></div></button><ul class="menus_items"><li class="menus_item"><a class="site-page" href="/"> About me</a></li><li class="menus_item"><a class="site-page" href="/#education"> Education</a></li><li class="menus_item"><a class="site-page" href="/#news"> News</a></li><li class="menus_item"><a class="site-page" href="/#selected-researches"> Selected Researches</a></li><li class="menus_item"><a class="site-page" href="/#publications"> Publications</a></li></ul></div></header><main id="page_main"><div class="side-card sticky"><div class="card-wrap" itemscope itemtype="http://schema.org/Person"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/profile.png'" alt="avatar"></div><div class="author-discrip"><h3>Lin YANG</h3><p class="author-bio">Senior Researcher, Noah's Ark Lab, Huawei</p></div><div class="author-links"><button class="btn m-social-links">Links</button><ul class="social-links"><li><a class="e-social-link" href="mailto:lin.yang.jason@gmail.com" target="_blank"><i class="fas fa-envelope" aria-hidden="true"></i><span>Email</span></a></li><li><a class="e-social-link" href="https://scholar.google.com.hk/citations?hl=en&amp;user=PlgosSoAAAAJ&amp;view_op=list_works&amp;sortby=pubdate" target="_blank"><i class="fas fa-graduation-cap" aria-hidden="true"></i><span>Google Scholar</span></a></li></ul></div></div></div><div class="page research-page" itemscope itemtype="http://schema.org/CreativeWork"><h2 class="page-title">EVIC - Boosting Multi-Domain Fine-Tuning of Large Language Models through Evolving Interactions between Samples</h2><article><!-- Back to home button at the top (for research pages)--><div class="back-to-home top"><a class="back-link" href="/" title="Back to Home"><i class="fas fa-arrow-left"></i><span>Back to Home</span></a></div><!-- For non-academia pages, render content as is--><p><strong>TL;DR:</strong><br>Multi-domain fine-tuning usually forces trade-offs (better code = worse math) because training samples conflict. This paper shows those conflicts evolve dynamically during training and can be measured via gradient interactions. EVIC periodically computes an “interaction matrix” to select only samples that currently help the whole dataset, boosting Mistral-7B performance by 4+ points while using up to 2× fewer training steps than standard mixing.</p>
+<hr>
+<h3 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a><strong>Motivation</strong></h3><p>Multi-domain fine-tuning of LLMs suffers from notorious capability trade-offs, where improving performance in one domain (e.g., coding) degrades performance in others (e.g., general instruction following). Existing approaches rely on empirical heuristics or domain-level curriculum strategies without understanding the fundamental interactions between individual training samples, leading to marginal improvements and high trial-and-error costs.</p>
+<hr>
+<h3 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a><strong>Problem</strong></h3><p>The core challenge is <strong>inter-sample conflict</strong>: training signals from different domains often conflict, hindering the effective use of high-quality data. Current methods assume that:</p>
+<ol>
+<li>Interactions between samples are static and determined solely by inherent semantic domain labels</li>
+<li>Domain-level data management is optimal</li>
+</ol>
+<p>These assumptions fail because interactions evolve during training, conflicts exist within the same domain, and synergies can occur across domains. Simply mixing data (Multi-Task Learning) or using staged training (Dual-stage Mixed Fine-tuning) cannot resolve these dynamic conflicts.</p>
+<hr>
+<h3 id="Intuition"><a href="#Intuition" class="headerlink" title="Intuition"></a><strong>Intuition</strong></h3><p><strong>EVIC (EVolving Interaction-guided Curriculum)</strong> models interactions as <strong>influence on loss</strong>, quantified via Adam gradients. Key insights:</p>
+<ul>
+<li><strong>Interactions evolve</strong>: Gradient-based influence between sample pairs changes significantly during training (e.g., conflict → promotion), rather than being fixed by domain semantics</li>
+<li><strong>Asymmetry</strong>: Sample $j$ helping sample $i$ does not imply the reverse ($sign(Int[j,i]) \neq sign(Int[i,j])$)</li>
+<li><strong>Sample-level granularity</strong>: Conflicts and promotions occur both within and across domains, necessitating fine-grained selection over coarse domain grouping</li>
+</ul>
+<p><strong>Method</strong>: Periodically compute an interaction matrix $Int(\theta_t) \in \mathbb{R}^{N \times N}$ where entry $[j,i]$ represents sample $j$’s influence on sample $i$’s loss. Select samples with non-negative net influence (row sums $\geq 0$) for training. Johnson-Lindenstrauss projection (8192 dimensions) reduces computational cost of high-dimensional gradients.</p>
+<hr>
+<h3 id="Results"><a href="#Results" class="headerlink" title="Results"></a><strong>Results</strong></h3><p><strong>Performance-to-sample ratio</strong> (Table 4):</p>
+<ul>
+<li><strong>Mistral-7B</strong>: 1.33× more efficient than MTL (uses 77.7% of training steps)</li>
+<li><strong>Llama-3.1-8B</strong>: 1.29× more efficient  </li>
+<li><strong>Qwen2.5-14B</strong>: 2.11× more efficient (uses 47.4% of training steps)</li>
+</ul>
+<p><strong>Coverage &amp; Convergence</strong>:</p>
+<ul>
+<li>Sample coverage reaches <strong>~90% after 2 iterations</strong> and <strong>&gt;96% after 3 iterations</strong> (Table 3)</li>
+<li>Only <strong>5% warm-up data</strong> required for optimal performance (Figure 3)</li>
+</ul>
+<p><strong>Ablation Results</strong>:</p>
+<ul>
+<li>Non-iterative variants (static sample selection) significantly underperform: Mistral-7B achieves 33.1 vs. 37.4 (iterative); Llama-3.1-8B achieves 43.2 vs. 44.3 (iterative)</li>
+<li>Iterative interaction computation is necessary for optimal multi-domain performance</li>
+</ul>
+<!-- Back to home button at the bottom (for research pages)--><div class="back-to-home bottom"><a class="back-link" href="/" title="Back to Home"><i class="fas fa-arrow-left"></i><span>Back to Home</span></a></div></article></div></main><div class="nav-wrap"><div class="nav"><button class="site-nav"><div class="navicon"></div></button><ul class="nav_items"><li class="nav_item"><a class="nav-page" href="/"> About me</a></li><li class="nav_item"><a class="nav-page" href="/#education"> Education</a></li><li class="nav_item"><a class="nav-page" href="/#news"> News</a></li><li class="nav_item"><a class="nav-page" href="/#selected-researches"> Selected Researches</a></li><li class="nav_item"><a class="nav-page" href="/#publications"> Publications</a></li></ul></div><div class="cd-top"><i class="fa fa-arrow-up" aria-hidden="true"></i></div></div><footer id="page_footer"><div class="footer_wrap"><div class="copyright">&copy;2020 - 2026 by Lin YANG</div><div class="theme-info">Powered by <a href="https://hexo.io" rel="nofollow">Hexo</a> & <a href="https://github.com/PhosphorW/hexo-theme-academia" rel="nofollow">Academia Theme</a></div><div class="visitor-stats"><span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv"></span>次</span><span class="visitor-separator">|</span><span id="busuanzi_container_site_uv">本站访客数 <span id="busuanzi_value_site_uv"></span>人</span></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery-pjax@latest/jquery.pjax.min.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><!-- MathJax configuration and loading--><script>window.MathJax = {
+    tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        macros: {
+            "\\RR": "\\mathbb{R}",
+            "\\EE": "\\mathbb{E}",
+            "\\PP": "\\mathbb{P}"
+        }
+    },
+    options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process',
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    startup: {
+        ready: function() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(function() {
+                console.log('MathJax is ready');
+                // Re-render math after page load
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                    MathJax.typesetPromise();
+                }
+            });
+        }
+    }
+};</script><!-- Load MathJax after configuration--><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script><!-- 不蒜子统计--><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></body></html>

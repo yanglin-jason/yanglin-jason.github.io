@@ -1,0 +1,59 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>Lin Yang's homepage</title><meta name="author" content="Lin YANG"><link rel="shortcut icon" href="/img/favicon.png"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"></head><body><header id="page_header"><div class="header_wrap"><div id="blog_name"><a class="blog_title" id="site-name" href="/">Lin Yang's homepage</a></div><button class="menus_icon"><div class="navicon"></div></button><ul class="menus_items"><li class="menus_item"><a class="site-page" href="/"> About me</a></li><li class="menus_item"><a class="site-page" href="/#education"> Education</a></li><li class="menus_item"><a class="site-page" href="/#news"> News</a></li><li class="menus_item"><a class="site-page" href="/#selected-researches"> Selected Researches</a></li><li class="menus_item"><a class="site-page" href="/#publications"> Publications</a></li></ul></div></header><main id="page_main"><div class="side-card sticky"><div class="card-wrap" itemscope itemtype="http://schema.org/Person"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/profile.png'" alt="avatar"></div><div class="author-discrip"><h3>Lin YANG</h3><p class="author-bio">Senior Researcher, Noah's Ark Lab, Huawei</p></div><div class="author-links"><button class="btn m-social-links">Links</button><ul class="social-links"><li><a class="e-social-link" href="mailto:lin.yang.jason@gmail.com" target="_blank"><i class="fas fa-envelope" aria-hidden="true"></i><span>Email</span></a></li><li><a class="e-social-link" href="https://scholar.google.com.hk/citations?hl=en&amp;user=PlgosSoAAAAJ&amp;view_op=list_works&amp;sortby=pubdate" target="_blank"><i class="fas fa-graduation-cap" aria-hidden="true"></i><span>Google Scholar</span></a></li></ul></div></div></div><div class="page research-page" itemscope itemtype="http://schema.org/CreativeWork"><h2 class="page-title">LogicTree - Improving Complex Reasoning of LLMs via Instantiated Multi-step Synthetic Logical Data</h2><article><!-- Back to home button at the top (for research pages)--><div class="back-to-home top"><a class="back-link" href="/" title="Back to Home"><i class="fas fa-arrow-left"></i><span>Back to Home</span></a></div><!-- For non-academia pages, render content as is--><p><strong>TL;DR:</strong><br><em>LogicTree addresses the scarcity of high-quality complex reasoning data by algorithmically generating intricate logical structures and grounding them in contextually rich, diverse real-world scenarios, thereby teaching LLMs robust, generalizable multi-step logical reasoning.</em></p>
+<hr>
+<h3 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a><strong>Motivation</strong></h3><p>Large Language Models (LLMs) struggle with <strong>complex, multi-step logical reasoning</strong> despite their impressive performance on other tasks. While synthetic data generation is a promising direction to enhance reasoning capabilities, existing methods rely on <strong>rigid predefined templates</strong> that limit complexity and fail to capture real-world contextual nuances, restricting LLMs’ ability to generalize.</p>
+<hr>
+<h3 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a><strong>Problem</strong></h3><p>Current synthetic logical reasoning datasets suffer from two critical limitations:</p>
+<ol>
+<li><strong>Insufficient Complexity</strong>: They generate simplistic reasoning patterns with limited rule types and shallow reasoning depths.</li>
+<li><strong>Poor Real-World Instantiation</strong>: They combine entities randomly without contextual relevance (e.g., “unicorn wins lottery → moon turns to cheese”), which weakens robustness and causes models to memorize spurious correlations rather than learn generalizable reasoning.</li>
+</ol>
+<hr>
+<h3 id="Intuition"><a href="#Intuition" class="headerlink" title="Intuition"></a><strong>Intuition</strong></h3><p><img src="./logic_tree.png" alt="LogicTree Illustration"></p>
+<p><strong>LogicTree</strong> synthesizes complex logical reasoning data through a three-step pipeline:</p>
+<ol>
+<li><strong>Symbolic Tree Generation via Backward Deduction</strong>:<br>Instead of templates, the method uses <strong>structural pattern matching</strong> on first-order logic formulas to iteratively expand reasoning trees backward from a conclusion. This creates deep, complex trees (depth 2–15) mixing propositional and first-order logic rules (e.g., Modus Ponens, Hypothetical Syllogism).</li>
+<li><p><strong>Two-Stage LLM Instantiation</strong>:</p>
+<ul>
+<li><strong>Stage 1 (Scenario Building)</strong>: Assigns contextually relevant real-world entities to leaf nodes (e.g., mapping logical symbols to “vaccination campaigns” and “public health”).</li>
+<li><strong>Stage 2 (Process Translation)</strong>: Translates the symbolic reasoning chain into coherent, step-by-step natural language explanations within that scenario.</li>
+</ul>
+</li>
+<li><strong>Diversity Control</strong>:<br>Each symbolic tree is instantiated into <strong>multiple diverse scenarios</strong> (3 by default) across different domains (economics, public health, etc.) to prevent overfitting to specific entity relationships and promote generalizable reasoning.</li>
+</ol>
+<hr>
+<h3 id="Result"><a href="#Result" class="headerlink" title="Result"></a><strong>Result</strong></h3><ul>
+<li><strong>Performance Gains</strong>: Training on LogicTree data achieves an <strong>average accuracy improvement of 9.4%</strong> across benchmarks (LogicBench, LogiQA 2.0, FOLIO, BBH, AGIEval) compared to vanilla models. It significantly outperforms baselines like PARARULE and FLD×2.</li>
+<li><strong>Multi-Step Superiority</strong>: On Multi-LogiEval (1–5 reasoning steps), LogicTree shows <strong>superior scaling</strong>; while baseline performance drops sharply with depth, LogicTree maintains high accuracy even at 5-step reasoning.</li>
+<li><strong>Data Quality</strong>: From 5,000 symbolic trees, 15,000 instantiated scenarios were generated, with 8.73% filtered for logical consistency, resulting in <strong>13.8k high-quality training examples</strong>.</li>
+<li><strong>Ablation Insights</strong>: Both complex tree structures and <strong>diverse instantiation</strong> (multiple scenarios per tree) are critical—using only one scenario causes overfitting, while diversity enables true logical generalization.</li>
+</ul>
+<!-- Back to home button at the bottom (for research pages)--><div class="back-to-home bottom"><a class="back-link" href="/" title="Back to Home"><i class="fas fa-arrow-left"></i><span>Back to Home</span></a></div></article></div></main><div class="nav-wrap"><div class="nav"><button class="site-nav"><div class="navicon"></div></button><ul class="nav_items"><li class="nav_item"><a class="nav-page" href="/"> About me</a></li><li class="nav_item"><a class="nav-page" href="/#education"> Education</a></li><li class="nav_item"><a class="nav-page" href="/#news"> News</a></li><li class="nav_item"><a class="nav-page" href="/#selected-researches"> Selected Researches</a></li><li class="nav_item"><a class="nav-page" href="/#publications"> Publications</a></li></ul></div><div class="cd-top"><i class="fa fa-arrow-up" aria-hidden="true"></i></div></div><footer id="page_footer"><div class="footer_wrap"><div class="copyright">&copy;2020 - 2026 by Lin YANG</div><div class="theme-info">Powered by <a href="https://hexo.io" rel="nofollow">Hexo</a> & <a href="https://github.com/PhosphorW/hexo-theme-academia" rel="nofollow">Academia Theme</a></div><div class="visitor-stats"><span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv"></span>次</span><span class="visitor-separator">|</span><span id="busuanzi_container_site_uv">本站访客数 <span id="busuanzi_value_site_uv"></span>人</span></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery-pjax@latest/jquery.pjax.min.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><!-- MathJax configuration and loading--><script>window.MathJax = {
+    tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        macros: {
+            "\\RR": "\\mathbb{R}",
+            "\\EE": "\\mathbb{E}",
+            "\\PP": "\\mathbb{P}"
+        }
+    },
+    options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process',
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    startup: {
+        ready: function() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(function() {
+                console.log('MathJax is ready');
+                // Re-render math after page load
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                    MathJax.typesetPromise();
+                }
+            });
+        }
+    }
+};</script><!-- Load MathJax after configuration--><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script><!-- 不蒜子统计--><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></body></html>
