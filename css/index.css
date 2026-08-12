@@ -974,6 +974,7 @@ blockquote p {
   font-style: italic;
   color: #6b655b;
   margin: 0.4rem 0;
+  white-space: pre-line;
 }
 .author-links {
   display: table-cell;
